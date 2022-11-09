@@ -29,7 +29,7 @@ using std::endl;
 template<typename K, typename V>
 class ChainingHash : public Hash<K,V> {
 private:
-    int totalBuckets, usedBuckets, elements = 0;
+    int totalBuckets, elements = 0;
     vector<list<pair<K,V>>> table;
 
 public:
@@ -72,12 +72,6 @@ public:
         table.at(keyHash).push_back(pair);
         elements++;
 
-        // if just added item is the first in the list
-        // update usedBucket count for load factor calculation
-        if (table.at(keyHash).size() == 1) {
-            usedBuckets++;
-        }
-
         // may need to rehash if too many buckets in use
         if (load_factor() > LOAD_TOLERANCE) {
             rehash();
@@ -116,11 +110,6 @@ public:
                 break;
             }
         }
-
-        // if list is now empty, decrement buckets
-        if (removed && table[keyHash].empty()) {
-            usedBuckets--;
-        }
     }
 
     int bucket_count() {
@@ -128,7 +117,7 @@ public:
     }
 
     float load_factor() {
-        return (float)usedBuckets / totalBuckets;
+        return (float)elements / totalBuckets;
     }
 
 private:
