@@ -29,25 +29,24 @@ using std::endl;
 template<typename K, typename V>
 class ChainingHash : public Hash<K,V> {
 private:
-	int totalBuckets, usedBuckets, elements = 0;
-	vector<list<pair<K,V>>> table;
-	// std::hash<K> H;
+    int totalBuckets, usedBuckets, elements = 0;
+    vector<list<pair<K,V>>> table;
 
 public:
-	ChainingHash(int n = 11) {
-		totalBuckets = findNextPrime(n);
-		table.clear();
-		table.resize(totalBuckets);
-	}
+    ChainingHash(int n = 11) {
+        totalBuckets = findNextPrime(n);
+        table.clear();
+        table.resize(totalBuckets);
+    }
 
     ~ChainingHash() {
         this->clear();
     }
 
-	// return number of elements currently inside the hash table
-	int size() {
-		return elements;
-	}
+    // return number of elements
+    int size() {
+        return elements;
+    }
 
     V operator[](const K& key) {
         // hash the key
@@ -66,9 +65,11 @@ public:
         throw std::range_error("Key not found in hash table");
     }
 
+    // add new key/value pair to list
     bool insert(const std::pair<K, V>& pair) {
-		int keyHash = hash(pair.first);
-		table.at(keyHash).push_back(pair);
+        // get hash for key
+        int keyHash = hash(pair.first);
+        table.at(keyHash).push_back(pair);
         elements++;
 
         // if just added item is the first in the list
@@ -83,22 +84,24 @@ public:
         }
 
         return true;
-	}
+    }
 
-	// returns true/false depending on whether the table is empty
-	bool empty() {
-		return elements == 0;
-	}
+    // returns whether the table is empty
+    bool empty() {
+        return elements == 0;
+    }
 
-	// clear all content
-	void clear() {
-		for (int i = 0 ; i < totalBuckets; i++) {
+    // clear all content
+    void clear() {
+        // iterate over each bucket and clear list
+        for (int i = 0 ; i < totalBuckets; i++) {
             table[i].clear();
         }
 
-		elements = 0;
-	}
+        elements = 0;
+    }
 
+    // remove key/value pair from list based on key
     void erase(const K& key) {
         // hash the key
         int keyHash = hash(key);

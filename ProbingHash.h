@@ -16,6 +16,7 @@ enum EntryState {
     DELETED = 2
 };
 
+// tracks corresponding state of each key/value pair
 template<typename K, typename V>
 struct HashNode {
     EntryState state;
@@ -41,6 +42,7 @@ public:
         this->clear();
     }
 
+    // return number of elements
     int size() {
         return elements;
     }
@@ -66,6 +68,7 @@ public:
         throw std::range_error("Key not found in hash table");
     }
 
+    // add new key/value pair to list
     bool insert(const std::pair<K, V>& pair) {
         // get hash for key
         int keyHash = hash(pair.first);
@@ -94,6 +97,7 @@ public:
         return true;
     }
 
+    // remove key/value pair from list based on key
     void erase(const K& key) {
         // get hash for key
         int keyHash = hash(key);
@@ -117,6 +121,7 @@ public:
         throw std::range_error("Key not found in hash table");
     }
 
+    // clear all content
     void clear() {
         elements = 0;
         buckets = 1;
