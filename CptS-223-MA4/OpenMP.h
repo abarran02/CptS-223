@@ -78,19 +78,24 @@ void cal_max() {
     // OpenMP implementation: start your code here
     // You need to follow the example given in cal_sum() and store the max value in the "max" variable created above.
     // The max found by your OpenMap should be identical to the max found by stl
+    int *max_list = new int[num_threads];
+
 #pragma omp parallel
     {
         int tid = omp_get_thread_num();
-        int local_max = -1;
+        // split data and find max of each dataset
         for (int i = tid*workload; i < (tid + 1)*workload; ++i) {
-            #pragma omp critical
-            {
-                if (data[i] > local_max) {
-                    local_max = data[i];
-                }
+            if (data[i] > max_list[tid]) {
+                max_list[tid] = data[i];
             }
         }
-        max = local_max;
+    }
+
+    // determine maximum of max_list
+    for (int i = 0; i < num_threads; i++) {
+        if (max_list[i] > max) {
+            max = max_list[i];
+        }
     }
     // OpenMP implementation: stop here
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
